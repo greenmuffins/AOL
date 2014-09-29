@@ -1,0 +1,1 @@
+Number of invalid bid requests: 0

@@ -13,3 +13,7 @@ class BidRequest:
     def __eq__(self, other):
         return isinstance(other, BidRequest) and self.id_request == other.id_request and self.time == other.time \
             and self.coordinate == other.coordinate
+
+    def __hash__(self):
+        return hash("id: " + str(self.id_request) + ", coordinate: " + str(self.coordinate)
+                    + ", time: " + str(self.time))

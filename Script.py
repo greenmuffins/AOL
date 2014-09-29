@@ -5,11 +5,13 @@ from Coordinate import Coordinate
 from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
+from operator import itemgetter
 
+user_to_bid_request = defaultdict(list)
 invalid_coordinates = []
 imprecise_coordinates = []
-exact_duplicate_bid_requests = []
-centroids = defaultdict(list)
+exact_duplicate_bid_requests = {}
+coordinate_count = {}
 
 
 def is_valid_coordinate(coordinate):
@@ -46,11 +48,9 @@ def create_datetime(datetime_string):
     return datetime(year, month, day, hour, minute, second)
 
 
-def fill_user_id_dictionary_with_data():
-    user_to_bid_request = defaultdict(list)
+def fill_dictionaries_with_data():
     f = open("input", "r")
     for line in f:
-        # checks valid point and checks enough decimals
         bid_request = parse_line_for_bid_request(line)
         coordinate = bid_request.coordinate
         time = bid_request.time
@@ -62,20 +62,73 @@ def fill_user_id_dictionary_with_data():
             imprecise_coordinates.append(bid_request)
 
         if is_valid_coordinate(coordinate) and is_precise_enough(coordinate):
-                if not is_exact_duplicate_bid_request(id_request, time, coordinate, user_to_bid_request):
-                    user_to_bid_request[id_request].append(bid_request)
+            if not is_exact_duplicate_bid_request(id_request, time, coordinate, user_to_bid_request):
+                user_to_bid_request[id_request].append(bid_request)
+                if coordinate in coordinate_count.keys():
+                    coordinate_count[coordinate] += 1
                 else:
-                    exact_duplicate_bid_requests.append(bid_request)
+                    coordinate_count[coordinate] = 1
+            else:
+                if bid_request in exact_duplicate_bid_requests.keys():
+                    exact_duplicate_bid_requests[bid_request] += 1
+                else:
+                    exact_duplicate_bid_requests[bid_request] = 1
 
     f.close()
-    return user_to_bid_request
 
 
-table = fill_user_id_dictionary_with_data()
-print len(table.items())
-for key in table:
-    print str(table[key]) + " " + str(len(table[key]))
+def number_of_values_in_dictionary(dictionary):
+    count = 0
+    for value in dictionary.values():
+        count += len(value)
+    return count
 
-print "Number of invalid bid requests: " + str(len(invalid_coordinates))
-print "Number of imprecise bid requests: " + str(len(imprecise_coordinates))
-print "Number of exact duplicate bid requests: " + str(len(exact_duplicate_bid_requests))
+
+def write_good_bid_requests_to_file():
+    f = open("good_bid_requests.txt", "w")
+    f.write("Number of unique user ids: " + str(len(user_to_bid_request.keys())) + "\n")
+    f.write("Number of unique bid requests: " + str(number_of_values_in_dictionary(user_to_bid_request)) + "\n")
+    for key in user_to_bid_request:
+        f.write(str(user_to_bid_request[key]) + "\n")
+    f.close()
+
+
+def write_invalid_bid_requests_to_file():
+    f = open("invalid_bid_requests.txt", "w")
+    f.write("Number of invalid bid requests: " + str(len(invalid_coordinates)) + "\n")
+    for bid_request in invalid_coordinates:
+        f.write(str(bid_request) + "\n")
+    f.close()
+
+
+def write_imprecise_bid_requests_to_file():
+    f = open("imprecise_bid_requests.txt", "w")
+    f.write("Number of imprecise bid requests: " + str(len(imprecise_coordinates)) + "\n")
+    for bid_request in imprecise_coordinates:
+        f.write(str(bid_request) + "\n")
+    f.close()
+
+
+def write_exact_duplicate_bid_requests_to_file():
+    f = open("exact_duplicate_bid_requests.txt", "w")
+    f.write("Number of exact duplicate bid requests: " + str(len(exact_duplicate_bid_requests.values())) + "\n")
+    sorted_exact_duplicate_bid_requests = sorted(exact_duplicate_bid_requests.items(), key=itemgetter(1), reverse=True)
+    for item in sorted_exact_duplicate_bid_requests:
+        f.write(str(item[1]) + ": " + str(item[0]) + "\n")
+    f.close()
+
+
+def write_coordinates_to_file():
+    f = open("good_coordinates.txt", "w")
+    f.write("Number of good coordinates: " + str(len(coordinate_count.values())) + "\n")
+    sorted_coordinate_count = sorted(coordinate_count.items(), key=itemgetter(1), reverse=True)
+    for item in sorted_coordinate_count:
+        f.write(str(item[1]) + ": " + str(item[0]) + "\n")
+    f.close()
+
+fill_dictionaries_with_data()
+write_good_bid_requests_to_file()
+write_invalid_bid_requests_to_file()
+write_imprecise_bid_requests_to_file()
+write_exact_duplicate_bid_requests_to_file()
+write_coordinates_to_file()

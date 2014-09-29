@@ -13,4 +13,4 @@ class Coordinate:
         return isinstance(other, Coordinate) and self.lat == other.lat and self.lng == other.lng
 
     def __hash__(self):
-        return hash(str(self.lat) + "," + str(self.lng))
+        return hash(str(self.lat) + ", " + str(self.lng))

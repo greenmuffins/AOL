@@ -11,12 +11,12 @@ from decimal import*
 f = open('testtest','w')
 d = {}
 x = 0
-with open('ogood') as fp:
+with open('input') as fp:
     for line in fp:
         line = line.split('|')
         ##decimal places, duplicates with same lat, lng, and device-id
         kevin = point(line[1],line[2],line[3])
-        if Decimal(line[2]).as_tuple().exponent < -4 and Decimal(line[3]).as_tuple().exponent < -4:
+        if Decimal(line[2]).as_tuple().exponent < -3 and Decimal(line[3]).as_tuple().exponent < -3:
             try:
                 d[kevin].append(kevin)
             except KeyError:
@@ -24,6 +24,7 @@ with open('ogood') as fp:
                 d[kevin].append(kevin)
         else:
             x += 1
+            print kevin
 
 #print '///////////////////////////'
 f.write(str(x) + ' number of points with imprecise measurements \n')

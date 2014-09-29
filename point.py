@@ -19,7 +19,7 @@ class point:
 
 if __name__ == "__main__":
     Kevin = point(1,2,3)
-    print Kevin;
+    print Kevin
     Ngo = point(5,2,3)
     print Kevin == Ngo
     d = defaultdict(int)

@@ -1,6 +1,7 @@
 __author__ = 'khn9mc'
 from collections import defaultdict
 import operator
+from decimal import*
 from operator import itemgetter
 
 class point:
@@ -34,5 +35,6 @@ if __name__ == "__main__":
     dict[point(2,3,3)].append(point(2,3,3))
     sorted(dict.iteritems(), key=itemgetter(1), reverse=True)
     print(dict)
-
-
+    d = Decimal('1.23152')
+    print Decimal('1.23152')
+    print Decimal('1.23152').as_tuple().exponent

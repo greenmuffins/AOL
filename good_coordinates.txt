@@ -1,4 +1,4 @@
-Number of good coordinates: 890
+Number of good coordinates: 956
 5: lat: 43.6667, lng: -79.4167
 3: lat: 29.6576576, lng: -95.584938
 3: lat: 49.0312, lng: -122.3012

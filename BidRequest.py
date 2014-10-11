@@ -15,5 +15,7 @@ class BidRequest:
             and self.coordinate == other.coordinate
 
     def __hash__(self):
-        return hash("id: " + str(self.id_request) + ", coordinate: " + str(self.coordinate)
-                    + ", time: " + str(self.time))
+        return hash((self.id_request, self.coordinate, self.time))
+
+    def get_bid_request(self):
+        return [self.id_request, self.coordinate, self.time]

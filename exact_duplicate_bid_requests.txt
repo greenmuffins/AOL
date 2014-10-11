@@ -1,3 +1,0 @@
-Number of exact duplicate bid requests: 2
-1: id: 0181d9b1f03b4bc02bd198be6a27b4b93d66488e, coordinate: lat: 36.0674667, lng: -95.9714355, time: 2014-09-15 01:41:16
-1: id: 0BBB0B3A-812C-4B19-8A7B-F5A231900C93, coordinate: lat: 28.270552, lng: -82.612809, time: 2014-09-15 01:41:14

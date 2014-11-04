@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="570bba03-d18b-48a7-b460-53e70bd7511f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Helper.py" afterPath="$PROJECT_DIR$/Helper.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Script.py" afterPath="$PROJECT_DIR$/Script.py" />
     </list>
     <ignored path="AOL.iws" />
@@ -47,7 +46,7 @@
       <file leaf-file-name="Script.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Script.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="177" column="0" selection-start="7107" selection-end="7107" vertical-scroll-proportion="4.0281124" vertical-offset="0" max-vertical-offset="3111">
+            <state line="16" column="24" selection-start="502" selection-end="502" vertical-scroll-proportion="0.36412317" vertical-offset="0" max-vertical-offset="3094">
               <folding>
                 <element signature="e#21#56#0" expanded="true" />
               </folding>
@@ -779,7 +778,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Script.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="177" column="0" selection-start="7107" selection-end="7107" vertical-scroll-proportion="4.0281124" vertical-offset="0" max-vertical-offset="3111">
+        <state line="16" column="24" selection-start="502" selection-end="502" vertical-scroll-proportion="0.36412317" vertical-offset="0" max-vertical-offset="3094">
           <folding>
             <element signature="e#21#56#0" expanded="true" />
           </folding>

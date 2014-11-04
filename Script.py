@@ -3,7 +3,6 @@ __author__ = 'Ryan'
 from collections import defaultdict
 from Coordinate import Coordinate
 from csv import writer
-from decimal import Decimal
 from Helper import parse_line_for_bid_request, distance, number_of_values_in_dictionary
 from time import mktime
 from operator import itemgetter
@@ -148,15 +147,15 @@ def write_coordinates_to_file(output_file, data):
     f.close()
 
 
-def write_scores_to_file(output_file):
+def write_scores_to_file(output_file, coordinate_table):
     f = open(output_file, "w")
-    sorted_coordinate_count = sorted(coordinate_count_table.items(), key=itemgetter(1), reverse=True)
+    sorted_coordinate_count = sorted(coordinate_table.items(), key=itemgetter(1), reverse=True)
     for coordinate in sorted_coordinate_count:
-        score = float(coordinate_count_table[coordinate[0]]) / float(number_of_values_in_dictionary(
-            coordinate_count_table)) * (10 ** 3)
+        score = float(coordinate_table[coordinate[0]]) / float(number_of_values_in_dictionary(
+            coordinate_table)) * (10 ** 3)
 #       print score
         f.write(str(score) + "\n")
-        f.write(str(coordinate[0]) + ","+str(coordinate_count_table[coordinate[0]]) + "," + str(score) + "\n")
+        f.write(str(coordinate[0]) + ","+str(coordinate_table[coordinate[0]]) + "," + str(score) + "\n")
     f.close()
 
 
@@ -172,6 +171,6 @@ def write_to_all_files(input_file):
     write_coordinates_to_file("imprecise_coordinates.csv", imprecise_coordinates)
     write_coordinates_to_file("coordinate_frequency.csv", coordinate_count_table)
     write_coordinates_to_file("good_coordinates.csv", good_coordinates)
-    write_scores_to_file("good_coordinate_scores.csv")
+    write_scores_to_file("good_coordinate_scores.csv", coordinate_count_table)
 
 write_to_all_files("input2")

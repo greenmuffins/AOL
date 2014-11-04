@@ -1,5 +1,6 @@
 __author__ = 'Ryan'
 
+from decimal import Decimal
 
 class Coordinate:
     def __init__(self, lat, lng):
@@ -17,3 +18,10 @@ class Coordinate:
 
     def get_coordinate(self):
         return [self.lat, self.lng]
+
+    def is_valid_coordinate(self):
+        return -90.0 <= self.lat <= 90.0 and -180.0 <= self.lng <= 180.0
+
+    def is_precise_enough(self):
+        return Decimal(str(self.lat)).as_tuple().exponent <= -4 \
+            and Decimal(str(self.lng)).as_tuple().exponent <= -4

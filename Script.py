@@ -64,6 +64,7 @@ def write_bid_requests_to_file(output_file, data):
 def concurrency(output_file):
     fc = open(output_file, "w")
     count = 0
+    fc.write("user_id,distance,speed,score")
     for user_id in device_id_to_bid_request_table:
         curr_list = device_id_to_bid_request_table[user_id]
         if len(curr_list) > 1:
@@ -73,11 +74,10 @@ def concurrency(output_file):
                 t2 = (curr_list[x+1].time.year, curr_list[x+1].time.month, curr_list[x+1].time.day,
                       curr_list[x+1].time.hour, curr_list[x+1].time.minute, curr_list[x+1].time.second, 2, 1, 0)
                 diff_time = mktime(t2)-mktime(t)
-                #print diff_time
                 if diff_time == 0:
                     diff_time = 0.01
                 speed = distance(curr_list[0].coordinate.lat, curr_list[0].coordinate.lng, curr_list[1].coordinate.lat,
-                                 curr_list[1].coordinate.lng)/(diff_time / 3600)
+                                 curr_list[1].coordinate.lng) / (diff_time / 3600)
                 if speed < 161:
                     score = 1
                 elif speed > 644:
@@ -152,7 +152,7 @@ def write_scores_to_file(output_file, data):
     denominator = float(number_of_values_in_dictionary(data)) * (10 ** 3)
     for coordinate in sorted_coordinate_count:
         score = float(data[coordinate[0]]) / denominator
-        f.write(str(coordinate[0]) + "," + str(data[coordinate[0]].lat) + "," + str(data[coordinate[0]].lng)
+        f.write(str(coordinate[0].lat) + "," + str(coordinate[0].lng) + "," + str(data[coordinate[0]])
                 + "," + str(score) + "\n")
     f.close()
 

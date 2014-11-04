@@ -9,7 +9,6 @@ from operator import itemgetter
 
 coordinate_count_table = defaultdict(int)
 device_id_to_bid_request_table = defaultdict(list)
-device_id_to_frequency = defaultdict(int)
 
 exact_duplicate_bid_requests = []
 good_coordinates = []
@@ -40,7 +39,6 @@ def fill_dictionaries_with_data(input_file):
                 device_id_to_bid_request_table[id_request].append(bid_request)
                 coordinate_count_table[coordinate] += 1
                 good_coordinates.append(coordinate)
-                device_id_to_frequency[id_request] += 1
             else:
                 exact_duplicate_bid_requests.append(bid_request)
     f.close()
@@ -66,8 +64,8 @@ def write_bid_requests_to_file(output_file, data):
 def concurrency(output_file):
     fc = open(output_file, "w")
     count = 0
-    for key in device_id_to_bid_request_table:
-        curr_list = device_id_to_bid_request_table[key]
+    for user_id in device_id_to_bid_request_table:
+        curr_list = device_id_to_bid_request_table[user_id]
         if len(curr_list) > 1:
             for x in range(0, len(curr_list) - 1):
                 t = (curr_list[x].time.year, curr_list[x].time.month, curr_list[x].time.day, curr_list[x].time.hour,
@@ -87,8 +85,8 @@ def concurrency(output_file):
                     count += 1
                 else:
                     score = 1 - ((speed - 161) / 483)
-                fc.write(str(key) + "," + str(distance(curr_list[0].coordinate.lng, curr_list[0].coordinate.lat,
-                                                       curr_list[1].coordinate.lng, curr_list[1].coordinate.lat))
+                fc.write(str(user_id) + "," + str(distance(curr_list[0].coordinate.lng, curr_list[0].coordinate.lat,
+                                                           curr_list[1].coordinate.lng, curr_list[1].coordinate.lat))
                          + "," + str(speed) + "," + str(score) + "\n")
     fc.write("faster than 400 miles/hour" + str(count))
 
@@ -112,8 +110,8 @@ def check_device_id(input_file, output_file):
     for line in f:
         split_line = line.split(',')
         device_id = str(split_line[2])
-        if device_id_to_frequency[device_id] != 0:
-            fw.write(str(device_id) + "," + str(device_id_to_frequency[device_id]) + "\n")
+        if len(device_id_to_bid_request_table[device_id]) != 0:
+            fw.write(str(device_id) + "," + str(len(device_id_to_bid_request_table[device_id])) + "\n")
             count_ex += 1
         else:
             count += 1
@@ -147,15 +145,15 @@ def write_coordinates_to_file(output_file, data):
     f.close()
 
 
-def write_scores_to_file(output_file, coordinate_table):
+def write_scores_to_file(output_file, data):
     f = open(output_file, "w")
-    sorted_coordinate_count = sorted(coordinate_table.items(), key=itemgetter(1), reverse=True)
+    f.write("freq,lat,lng,score")
+    sorted_coordinate_count = sorted(data.items(), key=itemgetter(1), reverse=True)
+    denominator = float(number_of_values_in_dictionary(data)) * (10 ** 3)
     for coordinate in sorted_coordinate_count:
-        score = float(coordinate_table[coordinate[0]]) / float(number_of_values_in_dictionary(
-            coordinate_table)) * (10 ** 3)
-#       print score
-        f.write(str(score) + "\n")
-        f.write(str(coordinate[0]) + ","+str(coordinate_table[coordinate[0]]) + "," + str(score) + "\n")
+        score = float(data[coordinate[0]]) / denominator
+        f.write(str(coordinate[0]) + "," + str(data[coordinate[0]].lat) + "," + str(data[coordinate[0]].lng)
+                + "," + str(score) + "\n")
     f.close()
 
 

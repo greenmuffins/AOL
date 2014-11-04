@@ -1,19 +1,20 @@
 __author__ = 'Ryan'
 
 from collections import defaultdict
+from Coordinate import Coordinate
 from csv import writer
 from Helper import parse_line_for_bid_request, distance
 from time import mktime
 
-user_id_to_bid_request_table = defaultdict(list)
 coordinate_count_table = defaultdict(int)
-invalid_coordinates = []
-imprecise_coordinates = []
-exact_duplicate_bid_requests = []
+device_id_to_bid_request_table = defaultdict(list)
+device_id_to_frequency = defaultdict(int)
 
-zip_dict = defaultdict(list)
-device_freq = defaultdict(int)
-good_coordinates = defaultdict(list)
+exact_duplicate_bid_requests = []
+good_coordinates = []
+imprecise_coordinates = []
+invalid_coordinates = []
+zip_codes = []
 
 
 def is_exact_duplicate_bid_request(bid_request, dictionary):
@@ -34,9 +35,11 @@ def fill_dictionaries_with_data(input_file):
             imprecise_coordinates.append(coordinate)
 
         if coordinate.is_valid_coordinate and coordinate.is_precise_enough():
-            if not is_exact_duplicate_bid_request(bid_request, user_id_to_bid_request_table):
-                user_id_to_bid_request_table[id_request].append(bid_request)
+            if not is_exact_duplicate_bid_request(bid_request, device_id_to_bid_request_table):
+                device_id_to_bid_request_table[id_request].append(bid_request)
                 coordinate_count_table[coordinate] += 1
+                good_coordinates.append(coordinate)
+                device_id_to_frequency[id_request] += 1
             else:
                 exact_duplicate_bid_requests.append(bid_request)
     f.close()
@@ -62,8 +65,8 @@ def write_bid_requests_to_file(output_file, data):
 def concurrency(output_file):
     fc = open(output_file, "w")
     count = 0
-    for key in user_id_to_bid_request_table:
-        curr_list = user_id_to_bid_request_table[key]
+    for key in device_id_to_bid_request_table:
+        curr_list = device_id_to_bid_request_table[key]
         if len(curr_list) > 1:
             for x in range(0, len(curr_list) - 1):
                 t = (curr_list[x].time.year, curr_list[x].time.month, curr_list[x].time.day, curr_list[x].time.hour,
@@ -93,20 +96,9 @@ def fill_zip_hash_table(input_file):
     f = open(input_file, "rU")
     for line in f:
         line = line.split(',')
-        lat = float(line[0])
-        lng = float(line[1])
-        lat = round(lat, 3)
-        lng = round(lng, 3)
-        zip_dict[lat].append(lng)
-    f.close()
-
-
-def total_device_id(input_file):
-    f = open(input_file, "r")
-    for line in f:
-        split_line = line.split('|')
-        device_id = str(split_line[1])
-        device_freq[device_id] += 1
+        lat = round(float(line[0]), 3)
+        lng = round(float(line[1]), 3)
+        zip_codes.append(Coordinate(lat, lng))
     f.close()
 
 
@@ -119,8 +111,8 @@ def check_device_id(input_file, output_file):
     for line in f:
         split_line = line.split(',')
         device_id = str(split_line[2])
-        if device_freq[device_id] != 0:
-            fw.write(str(device_id) + "," + str(device_freq[device_id]) + "\n")
+        if device_id_to_frequency[device_id] != 0:
+            fw.write(str(device_id) + "," + str(device_id_to_frequency[device_id]) + "\n")
             count_ex += 1
         else:
             count += 1
@@ -132,23 +124,11 @@ def check_device_id(input_file, output_file):
 def check_zip_dict(output_file1, output_file2):
     fc = open(output_file1, "w")
     fv = open(output_file2, "w")
-    for key in good_coordinates:
-        for index in good_coordinates[key]:
-            if index in zip_dict[key]:
-                fc.write(str(key) + "," + str(index) + "\n")
-            else:
-                fv.write(str(key) + "," + str(index) + "\n")
-
-
-def fill_good_coordinates(input_file, output_file):
-    f = open(input_file, "r")
-    fw = open(output_file, "w")
-    for line in f:
-        split_line = line.split('|')
-        lat = float(split_line[2])
-        lng = float(split_line[3])
-        fw.write(str(lat) + "," + str(lng) + "\n")
-    f.close()
+    for coordinate in good_coordinates:
+        if coordinate in zip_codes:
+            fc.write(coordinate.lat + "," + coordinate.lng + "\n")
+        else:
+            fv.write(coordinate.lat + "," + coordinate.lng + "\n")
 
 
 def write_coordinates_to_file(output_file, data):
@@ -166,21 +146,36 @@ def write_coordinates_to_file(output_file, data):
     f.close()
 
 
-def write_to_all_files():
-    fill_dictionaries_with_data("input2")
-    write_bid_requests_to_file("good_bid_requests.csv", user_id_to_bid_request_table)
+def write_coordinates_to_file():
+    f = open("good_coordinates.txt", "w")
+    print number_of_values_in_dictionary(coordinate_count)
+    sorted_coordinate_count = sorted(coordinate_count.items(), key=itemgetter(1), reverse=True)
+    e = 0;
+    for coordinate in sorted_coordinate_count:
+        e = abs(Decimal(str(coordinate[0].lat)).as_tuple().exponent)
+        score = float(coordinate_count[coordinate[0]])/float(number_of_values_in_dictionary(coordinate_count)) * math.pow(10,3)
+#        print score
+         f.write(str(score)+"\n")
+         f.write(str(coordinate[0])+","+str(coordinate_count[coordinate[0]])+"," +str(score)+ "\n")
+    f.close()
+
+
+
+
+def write_to_all_files(input_file):
+    fill_dictionaries_with_data(input_file)
+    write_bid_requests_to_file("good_bid_requests.csv", device_id_to_bid_request_table)
     write_bid_requests_to_file("exact_duplicate_bid_requests.csv", exact_duplicate_bid_requests)
     write_coordinates_to_file("invalid_coordinates.csv", invalid_coordinates)
     write_coordinates_to_file("imprecise_coordinates.csv", imprecise_coordinates)
     write_coordinates_to_file("coordinate_frequency.csv", coordinate_count_table)
+    write_coordinates_to_file("good_coordinates.csv", good_coordinates)
 
 
-write_to_all_files()
+write_to_all_files("input2")
 
 
-fill_zip_hash_table("zipcode.txt")
-fill_good_coordinates("input", "data1.csv")
-check_zip_dict("centroid.txt", "valid.txt")
-total_device_id("log2")
-check_device_id("device_download.csv", "app_id_info.csv")
-concurrency("concurrency.txt")
+# fill_zip_hash_table("zipcode.txt")
+# check_zip_dict("centroid.txt", "valid.txt")
+# check_device_id("device_download.csv", "app_id_info.csv")
+# concurrency("concurrency.txt")

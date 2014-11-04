@@ -2,6 +2,7 @@ __author__ = 'Ryan'
 
 from decimal import Decimal
 
+
 class Coordinate:
     def __init__(self, lat, lng):
         self.lat = lat

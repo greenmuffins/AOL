@@ -34,3 +34,12 @@ def distance(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     km = 6367 * c
     return km
+
+def number_of_values_in_dictionary(dictionary):
+    count = 0
+    for value in dictionary.values():
+        if isinstance(value, list):
+            count += len(value)
+        else:
+            count += value
+    return count

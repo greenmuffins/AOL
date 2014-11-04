@@ -3,8 +3,10 @@ __author__ = 'Ryan'
 from collections import defaultdict
 from Coordinate import Coordinate
 from csv import writer
-from Helper import parse_line_for_bid_request, distance
+from decimal import Decimal
+from Helper import parse_line_for_bid_request, distance, number_of_values_in_dictionary
 from time import mktime
+from operator import itemgetter
 
 coordinate_count_table = defaultdict(int)
 device_id_to_bid_request_table = defaultdict(list)
@@ -146,36 +148,30 @@ def write_coordinates_to_file(output_file, data):
     f.close()
 
 
-def write_coordinates_to_file():
-    f = open("good_coordinates.txt", "w")
-    print number_of_values_in_dictionary(coordinate_count)
-    sorted_coordinate_count = sorted(coordinate_count.items(), key=itemgetter(1), reverse=True)
-    e = 0;
+def write_scores_to_file(output_file):
+    f = open(output_file, "w")
+    sorted_coordinate_count = sorted(coordinate_count_table.items(), key=itemgetter(1), reverse=True)
     for coordinate in sorted_coordinate_count:
-        e = abs(Decimal(str(coordinate[0].lat)).as_tuple().exponent)
-        score = float(coordinate_count[coordinate[0]])/float(number_of_values_in_dictionary(coordinate_count)) * math.pow(10,3)
-#        print score
-         f.write(str(score)+"\n")
-         f.write(str(coordinate[0])+","+str(coordinate_count[coordinate[0]])+"," +str(score)+ "\n")
+        score = float(coordinate_count_table[coordinate[0]]) / float(number_of_values_in_dictionary(
+            coordinate_count_table)) * (10 ** 3)
+#       print score
+        f.write(str(score) + "\n")
+        f.write(str(coordinate[0]) + ","+str(coordinate_count_table[coordinate[0]]) + "," + str(score) + "\n")
     f.close()
-
-
 
 
 def write_to_all_files(input_file):
     fill_dictionaries_with_data(input_file)
+    # fill_zip_hash_table("zipcode.txt")
+    # check_zip_dict("centroid.csv", "valid.csv")
+    # check_device_id("device_download.csv", "app_id_info.csv")
+    # concurrency("concurrency.csv")
     write_bid_requests_to_file("good_bid_requests.csv", device_id_to_bid_request_table)
     write_bid_requests_to_file("exact_duplicate_bid_requests.csv", exact_duplicate_bid_requests)
     write_coordinates_to_file("invalid_coordinates.csv", invalid_coordinates)
     write_coordinates_to_file("imprecise_coordinates.csv", imprecise_coordinates)
     write_coordinates_to_file("coordinate_frequency.csv", coordinate_count_table)
     write_coordinates_to_file("good_coordinates.csv", good_coordinates)
-
+    write_scores_to_file("good_coordinate_scores.csv")
 
 write_to_all_files("input2")
-
-
-# fill_zip_hash_table("zipcode.txt")
-# check_zip_dict("centroid.txt", "valid.txt")
-# check_device_id("device_download.csv", "app_id_info.csv")
-# concurrency("concurrency.txt")

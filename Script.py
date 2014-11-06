@@ -1,7 +1,6 @@
 __author__ = 'Ryan'
 
 from collections import defaultdict
-from Coordinate import Coordinate
 from csv import writer
 from Helper import parse_line_for_bid_request, distance, number_of_values_in_dictionary
 from time import mktime
@@ -14,7 +13,6 @@ exact_duplicate_bid_requests = []
 good_coordinates = []
 imprecise_coordinates = []
 invalid_coordinates = []
-zip_codes = []
 
 
 def is_exact_duplicate_bid_request(bid_request, dictionary):
@@ -91,16 +89,6 @@ def concurrency(output_file):
     fc.write("faster than 400 miles/hour" + str(count))
 
 
-def fill_zip_hash_table(input_file):
-    f = open(input_file, "rU")
-    for line in f:
-        line = line.split(',')
-        lat = round(float(line[0]), 3)
-        lng = round(float(line[1]), 3)
-        zip_codes.append(Coordinate(lat, lng))
-    f.close()
-
-
 def check_device_id(input_file, output_file):
     count = 0
     count_ex = 0
@@ -118,16 +106,6 @@ def check_device_id(input_file, output_file):
     fw.write("count: " + str(count) + " count_ex: " + str(count_ex))
     f.close()
     fw.close()
-
-
-def check_zip_dict(output_file1, output_file2):
-    fc = open(output_file1, "w")
-    fv = open(output_file2, "w")
-    for coordinate in good_coordinates:
-        if coordinate in zip_codes:
-            fc.write(coordinate.lat + "," + coordinate.lng + "\n")
-        else:
-            fv.write(coordinate.lat + "," + coordinate.lng + "\n")
 
 
 def write_coordinates_to_file(output_file, data):
@@ -159,8 +137,6 @@ def write_scores_to_file(output_file, data):
 
 def write_to_all_files(input_file):
     fill_dictionaries_with_data(input_file)
-    # fill_zip_hash_table("zipcode.txt")
-    # check_zip_dict("centroid.csv", "valid.csv")
     # check_device_id("device_download.csv", "app_id_info.csv")
     # concurrency("concurrency.csv")
     write_bid_requests_to_file("good_bid_requests.csv", device_id_to_bid_request_table)

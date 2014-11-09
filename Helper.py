@@ -3,6 +3,7 @@ __author__ = 'Ryan'
 from BidRequest import BidRequest
 from Coordinate import Coordinate
 from datetime import datetime
+# from geonames
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -44,3 +45,23 @@ def number_of_values_in_dictionary(dictionary):
         else:
             count += value
     return count
+
+
+# def time_zone(lat, lng):
+#     geonames_client = geonames.GeonamesClient('demo')
+#     geonames_result = geonames_client.find_timezone({'lat': 48.871236, 'lng': 2.77928})
+#     print geonames_result['timezoneId']
+
+
+def is_point_in_polygon(lat, lng, lat_points, lng_points):
+    j = len(lat_points) - 1
+    odd_nodes = False
+    for i in range(len(lat_points)):
+        if (lng_points[i] <= lng < lng_points[j] or lng_points[j] <= lng < lng_points[i]) \
+                and (lat <= (lat_points[j] - lat_points[i]) * (lng - lng_points[i]) / (lng_points[j] - lng_points[i]) +
+                     lat_points[i]):
+            odd_nodes = not odd_nodes
+        j = i
+    return odd_nodes
+
+print is_point_in_polygon(150, 150, [100, 100, 200, 200], [100, 200, 200, 100])

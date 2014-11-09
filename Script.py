@@ -66,7 +66,7 @@ def concurrency(output_file):
     for user_id in device_id_to_bid_request_table:
         curr_list = device_id_to_bid_request_table[user_id]
         if len(curr_list) > 1:
-            for x in range(0, len(curr_list) - 1):
+            for x in range(len(curr_list) - 1):
                 t = (curr_list[x].time.year, curr_list[x].time.month, curr_list[x].time.day, curr_list[x].time.hour,
                      curr_list[x].time.minute, curr_list[x].time.second, 1, 1, 0)
                 t2 = (curr_list[x+1].time.year, curr_list[x+1].time.month, curr_list[x+1].time.day,

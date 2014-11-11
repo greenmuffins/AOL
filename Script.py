@@ -129,7 +129,7 @@ def write_scores_to_file(output_file, data):
     sorted_coordinate_count = sorted(data.items(), key=itemgetter(1), reverse=True)
     denominator = float(number_of_values_in_dictionary(data)) * (10 ** 3)
     for coordinate in sorted_coordinate_count:
-        score = float(data[coordinate[0]]) / denominator
+        score = 1 - float(data[coordinate[0]]) / denominator
         f.write(str(coordinate[0].lat) + "," + str(coordinate[0].lng) + "," + str(data[coordinate[0]])
                 + "," + str(score) + "\n")
     f.close()
@@ -148,3 +148,4 @@ def write_to_all_files(input_file):
     write_scores_to_file("good_coordinate_scores.csv", coordinate_count_table)
 
 write_to_all_files("input2")
+

@@ -147,4 +147,12 @@ def write_to_all_files(input_file):
     write_coordinates_to_file("good_coordinates.csv", good_coordinates)
     write_scores_to_file("good_coordinate_scores.csv", coordinate_count_table)
 
+
+# def score(speed):
+#     validity =
+#     concurrency =
+#     precision =
+#     centroid =
+#     return validity*concurrency*precision*centroid
+
 write_to_all_files("input2")

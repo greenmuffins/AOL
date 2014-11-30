@@ -2,7 +2,7 @@ __author__ = 'Ryan'
 
 from BidRequest import BidRequest
 from Coordinate import Coordinate
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import radians, cos, sin, asin, sqrt
 
 
@@ -64,4 +64,16 @@ def is_point_in_us(lat, lng):
     return is_point_in_polygon(lat, lng, lat_points, lng_points)
 
 
+def convert_from_eastern_to_local_time(lat, lng, time):
+    if -90 < lng <= -75:
+        return time-timedelta(hours=1)
+    elif -105 < lng <= -90:
+        return time-timedelta(hours=2)
+    elif -126 < lng <= -105:
+        return time-timedelta(hours=3)
+    else:
+        return time
+
+
 print is_point_in_us(39, -98)
+print convert_from_eastern_to_local_time(30, -120, datetime(2014, 5, 5, 14, 30, 3))

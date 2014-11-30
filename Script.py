@@ -148,4 +148,3 @@ def write_to_all_files(input_file):
     write_scores_to_file("good_coordinate_scores.csv", coordinate_count_table)
 
 write_to_all_files("input2")
-

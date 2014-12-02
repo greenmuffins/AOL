@@ -58,9 +58,9 @@ def is_point_in_polygon(lat, lng, lat_points, lng_points):
     return odd_nodes
 
 
-def is_point_in_us(lat, lng):
-    lat_points = [48, 24, 31, 50]
-    lng_points = [-65, -80, -124, -126]
+def is_point_in_north_america(lat, lng):
+    lat_points = [48, 24, 24, 7, 5, 31, 50, 55, 72, 72]
+    lng_points = [-50, -81, -88, -75, -85, -125, -130, -170, -165, -68]
     return is_point_in_polygon(lat, lng, lat_points, lng_points)
 
 
@@ -75,5 +75,5 @@ def convert_from_eastern_to_local_time(lat, lng, time):
         return time
 
 
-print is_point_in_us(39, -98)
+print is_point_in_north_america(39, -98)
 print convert_from_eastern_to_local_time(30, -120, datetime(2014, 5, 5, 14, 30, 3))
